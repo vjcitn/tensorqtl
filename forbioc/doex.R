@@ -1,0 +1,5 @@
+library(biocXqtl)
+source("tq_xexp.R")
+load("qex.rda")
+source("xexp2dfs.R")
+tq_xexp(qex, prefix="xex", write_parquet_path="/tmp/abc")
