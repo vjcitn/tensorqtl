@@ -1,7 +1,4 @@
-plink_prefix_path = '/home/exouser/tensorqtl/example/data/GEUVADIS.445_samples.GRCh38.20170504.maf01.filtered.nodup.chr18'
-expression_bed = '/home/exouser/tensorqtl/example/data/GEUVADIS.445_samples.expression.bed.gz'
-covariates_file = '/home/exouser/tensorqtl/example/data/GEUVADIS.445_samples.covariates.txt'
-prefix = 'GEUVADIS.445_samples'
+# LOW CONVERSION APPROACH
 
 #' run_tq runs tensorqtl on a given set of files
 #' @importFrom reticulate import
@@ -19,24 +16,14 @@ run_tq_pgen = function(plink_prefix_path, expression_bed, covariates_file, prefi
  reticulate::py_require("fastparquet")
  reticulate::py_require("pyarrow")
  pd = reticulate::import("pandas")
- pdraw = reticulate::import("pandas", convert=FALSE)
+ pdraw = reticulate::import("pandas") #, convert=FALSE)
  tor = reticulate::import("torch")
  tq = reticulate::import("tensorqtl")
  dev = tor$device("cuda")
- pgen = reticulate::import("tensorqtl.pgen", convert=FALSE)
+ pgen = reticulate::import("tensorqtl.pgen") #, convert=FALSE)
  cis = reticulate::import("tensorqtl.cis")
  trans = reticulate::import("tensorqtl.trans")
  post = reticulate::import("tensorqtl.post")
-
-#import pandas as pd
-#import torch
-#import tensorqtl
-#from tensorqtl import pgen, cis, trans, post
-#device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-#print(f"torch: {torch.__version__} (CUDA {torch.version.cuda}), device: {device}")
-#print(f"pandas: {pd.__version__}")
-
-# define paths to data
 
 # load phenotypes and covariates
 #phenotype_df, phenotype_pos_df = tensorqtl.read_phenotype_bed(expression_bed)
@@ -52,23 +39,16 @@ run_tq_pgen = function(plink_prefix_path, expression_bed, covariates_file, prefi
  genotype_df = pgr$load_genotypes()
  variant_df = pgr$variant_df
 
-# 
-# # ### *cis*-QTL: nominal p-values for all variant-phenotype pairs
-# 
-# # In[2]:
-# 
-# 
-# # map all cis-associations (results for each chromosome are written to file)
-# 
-# # all genes
+cat("genotype df class:\n")
+print(class(genotype_df))
+cat("variant df class:\n")
+print(class(variant_df))
+cat("phenotype df class:\n")
+print(class(phenotype_df))
+
  cis$map_nominal(genotype_df, variant_df, phenotype_df, phenotype_pos_df, prefix, covariates_df=covariates_df,
    write_stats=TRUE, write_top=TRUE, output_dir=write_parquet_path)
 }
-
-#plink_prefix_path = 'data/GEUVADIS.445_samples.GRCh38.20170504.maf01.filtered.nodup.chr18'
-#expression_bed = 'data/GEUVADIS.445_samples.expression.bed.gz'
-#covariates_file = 'data/GEUVADIS.445_samples.covariates.txt'
-#prefix = 'GEUVADIS.445_samples'
 
 #debug(run_tq_pgen)
 
