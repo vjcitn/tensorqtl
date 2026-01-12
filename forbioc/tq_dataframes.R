@@ -1,5 +1,4 @@
 
-#' data available in R approach
 
 #' run_tq runs tensorqtl on a given set of files; fastparquet must be in condaenv
 #' @importFrom reticulate import
