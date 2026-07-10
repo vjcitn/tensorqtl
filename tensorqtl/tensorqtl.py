@@ -65,6 +65,7 @@ def main():
         device = torch.device("cuda")
     elif torch.backends.mps.is_available():
         logger.write('  * using MPS (Apple Silicon GPU)')
+        os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
         device = torch.device("mps")
     else:
         logger.write('  * WARNING: using CPU!')
