@@ -24,7 +24,7 @@ def calculate_cis_nominal(genotypes_t, phenotype_t, residualizer=None, return_af
     r_nominal_t, genotype_var_t, phenotype_var_t = calculate_corr(genotypes_t, p, residualizer=residualizer, return_var=True)
     std_ratio_t = torch.sqrt(phenotype_var_t.reshape(1,-1) / genotype_var_t.reshape(-1,1))
     r_nominal_t = r_nominal_t.squeeze()
-    r2_nominal_t = r_nominal_t.double().pow(2)
+    r2_nominal_t = r_nominal_t.float().pow(2)
 
     if residualizer is not None:
         dof = residualizer.dof
@@ -32,7 +32,7 @@ def calculate_cis_nominal(genotypes_t, phenotype_t, residualizer=None, return_af
         dof = p.shape[1] - 2
     slope_t = r_nominal_t * std_ratio_t.squeeze()
     tstat_t = r_nominal_t * torch.sqrt(dof / (1 - r2_nominal_t))
-    slope_se_t = (slope_t.double() / tstat_t).float()
+    slope_se_t = (slope_t.float() / tstat_t).float()
 
     if return_af:
         af_t, ma_samples_t, ma_count_t = get_allele_stats(genotypes_t)

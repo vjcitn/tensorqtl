@@ -183,11 +183,11 @@ def calculate_replication(res_df, genotypes, phenotype_df, covariates_df=None, p
         phenotype_res_t = center_normalize(phenotype_res_t, dim=1)
 
         r_nominal_t = (genotype_res_t * phenotype_res_t).sum(1)
-        r2_nominal_t = r_nominal_t.double().pow(2)
+        r2_nominal_t = r_nominal_t.float().pow(2)
 
         tstat_t = torch.sqrt((dof_t * r2_nominal_t) / (1 - r2_nominal_t))
         slope_t = r_nominal_t * std_ratio_t
-        slope_se_t = (slope_t.abs().double() / tstat_t).float()
+        slope_se_t = (slope_t.abs().float() / tstat_t).float()
         pval = 2*stats.t.cdf(-np.abs(tstat_t.cpu()), dof)
 
         rep_df = pd.DataFrame(np.c_[res_df.index, res_df['variant_id'], ma_samples_t.cpu(), ma_count_t.cpu(), af_t.cpu(), pval, slope_t.cpu(), slope_se_t.cpu()],
@@ -223,7 +223,7 @@ def calculate_replication(res_df, genotypes, phenotype_df, covariates_df=None, p
         dof = residualizer.dof - 2
         rss_t = (r_t*r_t).sum(1)  # ng x np
         b_se_t = torch.sqrt( Xinv[:, torch.eye(3, dtype=torch.uint8).bool()] * rss_t.unsqueeze(-1) / dof )
-        tstat_t = (b_t.double() / b_se_t.double()).float()
+        tstat_t = (b_t.float() / b_se_t.float()).float()
         pval = 2*stats.t.cdf(-np.abs(tstat_t.cpu()), dof)
         b = b_t.cpu()
         b_se = b_se_t.cpu()
