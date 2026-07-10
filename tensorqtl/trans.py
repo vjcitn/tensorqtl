@@ -65,7 +65,7 @@ def map_trans(genotype_df, phenotype_df, covariates_df=None, interaction_s=None,
       af_s
     """
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if logger is None:
         logger = SimpleLogger(verbose=verbose)
@@ -311,7 +311,7 @@ def map_permutations(genotype_df, covariates_df, permutations=None,
              e.g., inverse normal transformed
     """
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if logger is None:
         logger = SimpleLogger()

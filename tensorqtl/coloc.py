@@ -28,7 +28,7 @@ def coloc(genotypes1_t, genotypes2_t, phenotype1_t, phenotype2_t,
     """COLOC from summary statistics (either beta/sds or p-values and MAF)"""
 
     assert phenotype1_t.dim() == 1
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     # phenotype 1
     if mode == 'beta':
@@ -126,7 +126,7 @@ def run_pairs(genotype_df, variant_df, phenotype1_df, phenotype2_df, phenotype_p
     """Compute COLOC for all phenotype pairs"""
 
     assert np.all(phenotype1_df.index == phenotype2_df.index)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if logger is None:
         logger = SimpleLogger()

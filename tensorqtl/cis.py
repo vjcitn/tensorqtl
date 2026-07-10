@@ -74,7 +74,7 @@ def calculate_association(genotype_df, phenotype_s, covariates_df=None,
     Standalone helper function for computing the association between
     a set of genotypes and a single phenotype.
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
     assert genotype_df.columns.equals(phenotype_s.index)
 
     # copy to GPU
@@ -141,7 +141,7 @@ def map_nominal(genotype_df, variant_df, phenotype_df, phenotype_pos_df, prefix,
     written to <output_dir>/<prefix>.cis_qtl_top_assoc.txt.gz unless
     write_top is set to False, in which case it is returned as a DataFrame
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if logger is None:
         logger = SimpleLogger()
@@ -630,7 +630,7 @@ def map_cis(genotype_df, variant_df, phenotype_df, phenotype_pos_df, covariates_
             verbose=True, warn_monomorphic=True):
     """Run cis-QTL mapping"""
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if logger is None:
         logger = SimpleLogger()
@@ -788,7 +788,7 @@ def map_independent(genotype_df, variant_df, cis_df, phenotype_df, phenotype_pos
 
     cis_df: output from map_cis, annotated with q-values (calculate_qvalues)
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if logger is None:
         logger = SimpleLogger()

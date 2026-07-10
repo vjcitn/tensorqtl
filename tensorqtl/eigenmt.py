@@ -31,7 +31,7 @@ def lw_shrink(X_t):
     Adapted from scikit-learn:
     https://github.com/scikit-learn/scikit-learn/blob/master/sklearn/covariance/shrunk_covariance_.py
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if len(X_t.shape) == 2:
         n_samples, n_features = X_t.shape  # samples x variants
@@ -84,7 +84,7 @@ def find_num_eigs(eigenvalues, variance, var_thresh=0.99):
 
 def compute_tests(genotypes_t, var_thresh=0.99, variant_window=200):
     """determine effective number of independent variants (M_eff)"""
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     # break into windows
     windows = torch.split(genotypes_t, variant_window)
@@ -130,7 +130,7 @@ def run_eigenmt(genotype_df, variant_df, phenotype_df, phenotype_pos_df, interac
     Returns the number of tests for each gene
     """
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if logger is None:
         logger = SimpleLogger()

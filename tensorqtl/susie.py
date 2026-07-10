@@ -45,7 +45,7 @@ def init_setup(n, p, L, scaled_prior_variance, varY, residual_variance=None,
                prior_weights=None, null_weight=None):  # , standardize
     """
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if scaled_prior_variance < 0:
         raise ValueError('Scaled prior variance must be positive.')
@@ -86,7 +86,7 @@ def init_finalize(s, X_t=None, Xr_t=None):
     """
     Update a susie fit object in order to initialize susie model.
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if s['V'].ndim == 0:
         # s['V'] = np.tile(s['V'], s['alpha'].shape[0])
@@ -190,7 +190,7 @@ def SER_posterior_e_loglik(X_t, xattr, Y_t, s2, Eb, Eb2):
 def single_effect_regression(Y_t, X_t, xattr, V, residual_variance=1, prior_weights=None,
                              optimize_V='EM', check_null_threshold=0):
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
     # assert optimize_V in ["none", "optim", "uniroot", "EM", "simple"]
 
     Xty = compute_Xty(X_t, Y_t, xattr['scaled_center'], xattr['scaled_scale'])
@@ -398,7 +398,7 @@ def get_purity(pos, X, Xcorr, squared=False, n=100):
 def susie_get_cs(res, X=None, Xcorr=None, coverage=0.95, min_abs_corr=0.5,
                  dedup=True, squared=False):
     """"""
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if X is not None and Xcorr is not None:
         raise ValueError('Only one of X or Xcorr should be specified.')
@@ -478,7 +478,7 @@ def susie(X_t, y_t, L=10, scaled_prior_variance=0.2,
           na_rm=False, max_iter=100, tol=0.001,
           verbose=False, track_fit=False):
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     n, p = X_t.shape
     mean_y = y_t.mean()
@@ -633,7 +633,7 @@ def map(genotype_df, variant_df, phenotype_df, phenotype_pos_df, covariates_df,
     SuSiE fine-mapping: computes SuSiE model for all phenotypes
     """
     assert phenotype_df.columns.equals(covariates_df.index)
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if logger is None:
         logger = SimpleLogger()

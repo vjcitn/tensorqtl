@@ -76,7 +76,7 @@ def calculate_afc(assoc_df, counts_df, genotype_df, variant_df=None, covariates_
       [1] Mohammadi et al., 2017 (genome.cshlp.org/content/27/11/1872)
       [2] Liang et al., 2021 (10.1038/s41467-021-21592-8)
     """
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if variant_df is not None:
         gi = gt.GenotypeIndexer(genotype_df, variant_df)
@@ -119,7 +119,7 @@ def calculate_afc(assoc_df, counts_df, genotype_df, variant_df=None, covariates_
 def calculate_replication(res_df, genotypes, phenotype_df, covariates_df=None, paired_covariate_df=None,
                           interaction_s=None, compute_pi1=False, lambda_qvalue=None, logp=False):
     """res_df: DataFrame with 'variant_id' column and phenotype IDs as index"""
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps" if torch.backends.mps.is_available() else "cpu")
 
     if paired_covariate_df is not None:
         assert paired_covariate_df.index.equals(covariates_df.index)
