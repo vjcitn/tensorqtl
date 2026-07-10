@@ -62,9 +62,13 @@ def main():
     logger.write(f'[{datetime.now().strftime("%b %d %H:%M:%S")}] Running TensorQTL v{importlib.metadata.version("tensorqtl")}: {args.mode.split("_")[0]}-QTL mapping')
     if torch.cuda.is_available():
         logger.write(f'  * using GPU ({torch.cuda.get_device_name(torch.cuda.current_device())})')
+        device = torch.device("cuda")
+    elif torch.backends.mps.is_available():
+        logger.write('  * using MPS (Apple Silicon GPU)')
+        device = torch.device("mps")
     else:
         logger.write('  * WARNING: using CPU!')
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cpu")
     if args.seed is not None:
         logger.write(f'  * using seed {args.seed}')
 
