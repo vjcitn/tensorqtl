@@ -8,15 +8,20 @@ import sys
 import re
 import subprocess
 
-# check R
+# check R — test rpy2 in a subprocess so a segfault there cannot crash the main process
 has_rpy2 = False
-try:
-    subprocess.check_call('which R', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    subprocess.check_call("R -e 'library(qvalue)'", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    import rpy2
-    import rfunc
-    has_rpy2 = True
-except:
+_rpy2_test = subprocess.run(
+    [sys.executable, '-c',
+     "import rpy2; from rpy2.robjects.packages import importr; importr('qvalue')"],
+    capture_output=True, timeout=30
+)
+if _rpy2_test.returncode == 0:
+    try:
+        import rfunc
+        has_rpy2 = True
+    except Exception:
+        pass
+if not has_rpy2:
     print("Warning: 'rfunc' cannot be imported. R with the 'qvalue' library and the 'rpy2' Python package are needed to compute q-values.")
 
 
