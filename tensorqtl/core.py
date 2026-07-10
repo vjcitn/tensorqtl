@@ -66,8 +66,12 @@ class SimpleLogger(object):
 #------------------------------------------------------------------------------
 class Residualizer(object):
     def __init__(self, C_t):
-        # center and orthogonalize
-        self.Q_t, _ = torch.linalg.qr(C_t - C_t.mean(0))
+        # linalg.qr is not yet implemented for MPS; fall back to CPU for the
+        # factorisation then move Q back to the original device.
+        device = C_t.device
+        C_cpu = C_t.cpu()
+        Q_cpu, _ = torch.linalg.qr(C_cpu - C_cpu.mean(0))
+        self.Q_t = Q_cpu.to(device)
         self.dof = C_t.shape[0] - 2 - C_t.shape[1]
 
     def transform(self, M_t, center=True):
