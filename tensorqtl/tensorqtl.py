@@ -208,14 +208,14 @@ def main():
             chunk_files = glob.glob(os.path.join(args.output_dir, f"{args.prefix}.chunk*.cis_qtl_pairs.*.parquet"))
             if args.chunk_size == 'chr':  # remove redundant chunk ID from file names
                 for f in chunk_files:
-                    x = re.findall(f"{args.prefix}\.(chunk\d+)", os.path.basename(f))
+                    x = re.findall(rf"{args.prefix}\.(chunk\d+)", os.path.basename(f))
                     assert len(x) == 1
                     os.rename(f, f.replace(f"{x[0]}.", ""))
             else:  # concatenate outputs by chromosome
                 chunk_df = pd.DataFrame({
                     'file': chunk_files,
-                    'chunk': [int(re.findall(f"{args.prefix}\.chunk(\d+)", os.path.basename(i))[0]) for i in chunk_files],
-                    'chr': [re.findall("\.cis_qtl_pairs\.(.*)\.parquet", os.path.basename(i))[0] for i in chunk_files],
+                    'chunk': [int(re.findall(rf"{args.prefix}\.chunk(\d+)", os.path.basename(i))[0]) for i in chunk_files],
+                    'chr': [re.findall(r"\.cis_qtl_pairs\.(.*)\.parquet", os.path.basename(i))[0] for i in chunk_files],
                 }).sort_values('chunk')
                 for chrom, chr_df in chunk_df.groupby('chr', sort=False):
                     print(f"\rConcatenating outputs for {chrom}", end='' if chrom != chunk_df['chr'].iloc[-1] else None)
